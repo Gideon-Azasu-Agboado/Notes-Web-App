@@ -1,27 +1,21 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Body from './Body'
-import UserNameForm from './UserNameForm'
+import { toast } from 'sonner'
 
-type Props = {
-    userEmail: string | null | undefined
-}
+const Hero = () => {
+    const [check, setCheck] = useState(false)
 
-const Hero = ({ userEmail }: Props) => {
-    const [check, setCheck] = useState(true)
+    useEffect(() => {
+        toast('Successfully logged in!');
+    }, [])
 
     return (
         <div className='mt-4'>
             <h1 className='text-4xl font-semibold text-center mt-20'>Notes Web App</h1>
             <p className='text-center pt-3'>Save notes that you would like to keep with you forever</p>
-            {/* <p className='pt-5'>{userEmail}</p> */}
-            {
-                check
-                    ?
-                    <Body />
-                    :
-                    <UserNameForm />
-            }
+            <Body />
+
         </div>
     )
 }

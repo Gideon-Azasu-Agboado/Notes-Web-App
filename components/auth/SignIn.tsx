@@ -7,7 +7,7 @@ export default function SignIn() {
             <form
                 action={async () => {
                     "use server"
-                    await signIn("google", { redirectTo: '/home' })
+                    await signIn("google", { redirectTo: '/redirecting' })
                 }}
             >
                 <button type="submit" className="h-12 w-[18rem] rounded-xl bg-slate-100 shadow-lg flex flex-row justify-center items-center">

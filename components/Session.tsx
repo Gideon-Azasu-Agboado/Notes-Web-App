@@ -18,7 +18,7 @@ const Session = async () => {
         if (data.message === 'success') {
             redirect(`/home/${data.user.username}`)
         } else if (data.message === 'create') {
-            redirect(`/create-user/${email}`)
+            redirect(`/create-user/${(email)}`)
         }
     }
 

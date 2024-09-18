@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
         await connectDb()
 
         const user = await User.findOne({ email });
+
         if (user) {
             console.log('success')
             return new NextResponse(

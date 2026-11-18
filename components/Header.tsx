@@ -1,8 +1,6 @@
-import { CiSearch } from "react-icons/ci";
 import SignOut from './auth/SignOut';
 import SignOutActions from '@/actions/SignOutActions';
-import { useParams } from 'next/navigation'
-import { useEffect, useState } from "react";
+import { Search, X } from 'lucide-react'
 
 interface Props {
     username: string | undefined,
@@ -11,47 +9,47 @@ interface Props {
 }
 
 const Header = ({ username, query, setQuery }: Props) => {
-    const [initials, setInitials] = useState('')
-
-    useEffect(() => {
-        if (username) {
-            setInitials(getInitials(username));
-        }
-    }, [username]);
-
-    const getInitials = (username: string) => {
-        const words = username.trim().split(/\s+/);
-
-        if (words.length === 1) {
-            return words[0][0];
-        }
-
-        return words.map(word => word[0]).join('');
-    }
+    const initials = username?.trim().split(/\s+/).map((word) => word[0]).join('').slice(0, 2).toUpperCase() ?? ''
 
     return (
-        <div className='flex flex-row justify-between items-center mt-3'>
-            <div className='flex flex-row items-center mt-5'>
-                <div className='h-[4rem] w-[4rem] rounded-full flex justify-center items-center border border-blue-400'>
-                    <div className='h-[3.5rem] w-[3.5rem] rounded-full flex justify-center items-center bg-slate-300'>
-                        <h1 className='text-xl font-semibold'>{initials}</h1>
-                    </div>
+        <div className='motion-rise mx-auto mt-12 flex max-w-6xl flex-col gap-5 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex min-w-0 items-center gap-4'>
+                <div className='flex h-14 w-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-slate-900 text-lg font-semibold text-white shadow-lg shadow-slate-900/10'>
+                    {initials}
                 </div>
-                <div className='ml-4 p-6 shadow-sm rounded-2xl'>
-                    <h1 className='text-xl font-semibold whitespace-nowrap'>Welcome, {username}</h1>
-                    <p className='text-[14px] whitespace-nowrap text-blue-600'>What would you like to write today?</p>
+                <div className='min-w-0'>
+                    <p className='text-sm text-slate-500'>Welcome back</p>
+                    <h2 className='truncate text-lg font-semibold tracking-tight text-slate-900 sm:text-xl'>{username}</h2>
+                    <p className='mt-0.5 text-sm text-slate-500'>What would you like to write today?</p>
+                </div>
+                <div className='ml-auto sm:ml-0'>
                     <SignOut SignoutServerAction={SignOutActions} />
                 </div>
             </div>
-            <div className='w-[30%] flex flex-row items-center'>
+            <label className='flex h-12 w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/80 px-4 text-slate-400 shadow-sm transition focus-within:border-violet-300 focus-within:ring-4 focus-within:ring-violet-100 sm:max-w-xs'>
+                <Search size={18} aria-hidden='true' />
                 <input
                     type='text'
-                    placeholder='Search...'
+                    aria-label='Search notes'
+                    placeholder='Search your notes'
                     value={query}
-                    className='w-full h-9 border-b border-b-slate-500 outline-none'
+                    className='min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400'
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Escape') setQuery('')
+                    }}
                 />
-            </div>
+                {query && (
+                    <button
+                        type='button'
+                        aria-label='Clear search'
+                        className='flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 active:scale-90'
+                        onClick={() => setQuery('')}
+                    >
+                        <X size={15} />
+                    </button>
+                )}
+            </label>
         </div>)
 }
 

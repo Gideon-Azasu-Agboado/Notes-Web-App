@@ -1,16 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { formatDistanceToNow, parseISO } from 'date-fns';
-import { IoPencilSharp } from "react-icons/io5";
-import { RiDeleteBin6Fill } from "react-icons/ri";
-import { FaEye } from "react-icons/fa";
-
-interface PassedNotesProps {
-    notes: any[]
-    setNotes: React.Dispatch<React.SetStateAction<any[]>>
-    deleteNote: (note_id: string) => Promise<void>;
-    getNoteDetails: (note_id: string, type: string) => void;
-    setShow: React.Dispatch<React.SetStateAction<boolean>>,
-}
+import React from 'react'
+import { formatDistanceToNow, parseISO } from 'date-fns'
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 
 interface NotesProps {
     _id: string
@@ -23,85 +13,79 @@ interface NotesProps {
     updateState: boolean
 }
 
+interface PassedNotesProps {
+    notes: NotesProps[]
+    deleteNote: (note_id: string) => Promise<void>;
+    getNoteDetails: (note_id: string, type: string) => void;
+    setShow: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
 const NotesCard = ({ notes, deleteNote, getNoteDetails, setShow }: PassedNotesProps) => {
-    // const [notes, setNotes] = useState([])
-
-    // useEffect(() => {
-    //     fetchNotes()
-    // }, [userEmail])
-
-    // const fetchNotes = async () => {
-    //     const response = await fetch(`http://localhost:3000/api/note?email=${userEmail}`)
-    //     const notesData = await response.json()
-    //     setNotes(notesData)
-    //     console.log('USERDATE >>>>>>>> ', notesData)
-    // }
-
-    const ViewDetails = (note_id: string, type: string) => {
-        getNoteDetails(note_id, type)
+    const showDetails = (note_id: string) => {
+        getNoteDetails(note_id, 'view')
         setShow(true)
     }
 
-    const formatRelativeTime = (timestamp: string) => {
-        const date = parseISO(timestamp);
-        return formatDistanceToNow(date, { addSuffix: true });
-    };
+    const formatRelativeTime = (timestamp: string) => (
+        formatDistanceToNow(parseISO(timestamp), { addSuffix: true })
+    )
 
     return (
-        <div>
-            {
-                notes.map((note: NotesProps) => (
-                    <div key={note._id} className='p-9 shadow-lg rounded-xl mb-6 hover:shadow-xl'>
-                        <div className='flex justify-end'>
-                            <div className='flex flex-row gap-5'>
-                                <div className='group relative'>
-                                    <h1 className='cursor-pointer'>
-                                        <FaEye onClick={() => ViewDetails(note._id, 'view')} />
-                                    </h1>
-                                    <div className='px-5 py-1 shadow-xl rounded-md absolute -top-12 right-1 hidden group-hover:block transition duration-700'>
-                                        <p className='text-blue-700 text-[14px]'>View</p>
-                                    </div>
-                                </div>
-                                <div className='group relative'>
-                                    <h1 className='cursor-pointer'>
-                                        <IoPencilSharp
-                                            onClick={() => getNoteDetails(note._id, 'update')}
-                                        />
-                                    </h1>
-                                    <div className='px-5 py-1 shadow-xl rounded-md absolute -top-12 -right-5 hidden group-hover:block transition duration-700'>
-                                        <p className='text-blue-700 text-[14px]'>Edit</p>
-                                    </div>
-                                </div>
-                                <div className='group relative'>
-                                    <h1 className='cursor-pointer'>
-                                        <RiDeleteBin6Fill
-                                            onClick={() => deleteNote(note._id)}
-                                        />
-                                    </h1>
-                                    <div className='px-5 py-1 shadow-xl rounded-md absolute -top-12 hidden group-hover:block transition duration-700'>
-                                        <p className='text-blue-700 text-[14px]'>Delete</p>
-                                    </div>
-                                </div>
-                            </div>
+        <div className='space-y-4'>
+            {notes.map((note, index) => (
+                <article
+                    key={note._id}
+                    className='motion-rise rounded-[1.5rem] border border-slate-100 bg-white p-5 shadow-[0_12px_35px_-26px_rgba(15,23,42,0.28)] transition duration-200 hover:-translate-y-0.5 hover:border-violet-100 hover:shadow-[0_18px_40px_-24px_rgba(15,23,42,0.24)] sm:p-6'
+                    style={{ animationDelay: `${Math.min(index * 55, 330)}ms` }}
+                >
+                    <div className='flex items-start justify-between gap-4'>
+                        <div className='min-w-0'>
+                            <h3 className='break-words text-lg font-semibold tracking-tight text-slate-900'>{note.title}</h3>
+                            <p className='mt-2 line-clamp-4 whitespace-pre-wrap break-words text-sm leading-6 text-slate-500'>
+                                {note.description}
+                            </p>
                         </div>
-                        <h1 className='font-medium text-xl mt-3'>{note.title}</h1>
-                        <p className='pt-2 line-clamp-3'>
-                            {note.description}
-                        </p>
-                        <div className='flex justify-end mt-4'>
-                            {
-                                note.updateState
-                                    ?
-                                    <p className='text-xs text-gray-500'>Updated {formatRelativeTime(note.updatedAt)}</p>
-                                    :
-                                    <p className='text-xs text-gray-500'>Created {formatRelativeTime(note.createdAt)}</p>
-                            }
+                        <div className='flex shrink-0 items-center gap-1'>
+                            <button
+                                type='button'
+                                aria-label={`View ${note.title}`}
+                                title='View note'
+                                className='flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition duration-150 hover:scale-110 hover:bg-violet-50 hover:text-violet-700 active:scale-95'
+                                onClick={() => showDetails(note._id)}
+                            >
+                                <Eye size={17} />
+                            </button>
+                            <button
+                                type='button'
+                                aria-label={`Edit ${note.title}`}
+                                title='Edit note'
+                                className='flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition duration-150 hover:scale-110 hover:bg-violet-50 hover:text-violet-700 active:scale-95'
+                                onClick={() => getNoteDetails(note._id, 'update')}
+                            >
+                                <Pencil size={16} />
+                            </button>
+                            <button
+                                type='button'
+                                aria-label={`Delete ${note.title}`}
+                                title='Delete note'
+                                className='flex h-9 w-9 items-center justify-center rounded-xl text-slate-400 transition duration-150 hover:scale-110 hover:bg-rose-50 hover:text-rose-600 active:scale-95'
+                                onClick={() => deleteNote(note._id)}
+                            >
+                                <Trash2 size={16} />
+                            </button>
                         </div>
                     </div>
-                ))
-            }
+                    <div className='mt-5 flex items-center justify-between border-t border-slate-100 pt-4'>
+                        <span className='rounded-full bg-slate-50 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-slate-400'>
+                            {note.updateState ? 'Updated' : 'Saved'}
+                        </span>
+                        <p className='text-xs text-slate-400'>
+                            {formatRelativeTime(note.updateState ? note.updatedAt : note.createdAt)}
+                        </p>
+                    </div>
+                </article>
+            ))}
         </div>
-
     )
 }
 

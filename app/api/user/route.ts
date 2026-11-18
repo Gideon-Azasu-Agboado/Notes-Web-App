@@ -8,12 +8,13 @@ export async function GET(request: NextRequest) {
         const email = searchParams.get('email');
 
         if (!email) {
-            return new NextResponse(JSON.stringify('Email parameter is required'), { status: 500 });
+            return NextResponse.json({ message: 'Email parameter is required' }, { status: 400 });
         }
 
         await connectDb()
 
         const user = await User.findOne({ email });
+        console.log('user >>>>>>>>>>> ', user)
 
         if (user) {
             console.log('success')
@@ -29,12 +30,12 @@ export async function GET(request: NextRequest) {
             )
         }
 
-    } catch (error: any) {
+    } catch (error) {
         console.log('error >>>>>>>>>>> ', error)
-        return new NextResponse(error.message, { status: 500 })
+        const message = error instanceof Error ? error.message : 'Unexpected error'
+        return NextResponse.json({ message }, { status: 500 })
     }
 }
-
 
 export async function POST(request: Request) {
     try {
@@ -48,7 +49,8 @@ export async function POST(request: Request) {
             JSON.stringify({ message: 'User created succesfully', user: newUser }),
             { status: 200 }
         )
-    } catch (error: any) {
-        return new NextResponse(error.message, { status: 500 })
+    } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unexpected error'
+        return NextResponse.json({ message }, { status: 500 })
     }
 }

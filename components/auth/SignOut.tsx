@@ -2,6 +2,7 @@ type SignoutServerActionProps = {
     SignoutServerAction: (formData: FormData) => void;
 }
 import { toast } from 'sonner'
+import { LogOut } from 'lucide-react'
 
 export default function SignOut({ SignoutServerAction }: SignoutServerActionProps) {
     return (
@@ -10,12 +11,13 @@ export default function SignOut({ SignoutServerAction }: SignoutServerActionProp
         >
             <button
                 type="submit"
-                className='bg-blue-500 py-1 px-4 text-xs rounded-lg text-white mt-2'
+                className='mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-900'
                 onClick={() => {
                     toast('Successfully logged out!');
                 }}
             >
-                Logout
+                <LogOut size={13} aria-hidden='true' />
+                Sign out
             </button>
         </form>
     )

@@ -10,20 +10,23 @@ const connectDb = async () => {
         return
     }
 
-    if (connectionState === 2) {
-        console.log('Connecting to database')
-        return
+    if (!MONGODB_URI) {
+        throw new Error('MONGODB_URI is not defined')
     }
 
     try {
-        mongoose.connect(MONGODB_URI!, {
-            dbName: 'NotesWebApp',
-            bufferCommands: true
-        })
+        if (connectionState === 2) {
+            await mongoose.connection.asPromise()
+        } else {
+            await mongoose.connect(MONGODB_URI, {
+                dbName: 'NotesWebApp',
+                bufferCommands: true
+            })
+        }
         console.log('Connected to database')
-    } catch (error: any) {
-        console.log('Error', error)
-        throw new Error('Error connecting to database', error)
+    } catch (error) {
+        console.error('Error connecting to database', error)
+        throw error
     }
 
 }

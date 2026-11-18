@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import Form from './Form'
 import NotesCard from './NotesCard'
 import Header from './Header'
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from 'sonner'
 import { Skeleton } from './ui/skeleton'
 import ViewDetails from './ViewDetails'
+import { FileText } from 'lucide-react'
 
 interface UserProps {
     _id?: string
@@ -201,19 +202,23 @@ const Body = () => {
     }
 
     return (
-        <div>
+        <div className='motion-rise' style={{ animationDelay: '240ms' }}>
             <Header
                 username={user?.username}
                 query={query}
                 setQuery={setQuery}
             />
-            <div className='flex flex-row mt-12'>
-                <div className='w-[40%]'>
+            <main className='mx-auto mt-8 grid max-w-6xl grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]'>
+                <section className='motion-rise rounded-[2rem] border border-white/80 bg-white/85 p-5 shadow-[0_20px_60px_-32px_rgba(15,23,42,0.22)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_24px_70px_-34px_rgba(15,23,42,0.28)] sm:p-8 lg:sticky lg:top-8' style={{ animationDelay: '320ms' }}>
+                    <div className='mb-7'>
+                        <p className='text-xs font-semibold uppercase tracking-[0.18em] text-violet-500'>Your space</p>
+                        <h2 className='mt-2 text-2xl font-semibold tracking-tight text-slate-900'>Capture a thought</h2>
+                        <p className='mt-2 text-sm leading-6 text-slate-500'>Give an idea a place to land. You can come back to it anytime.</p>
+                    </div>
                     <Form
                         title={title}
                         setTitle={setTitle}
                         btnLoading={btnLoading}
-                        setBtnLoading={setBtnLoading}
                         subnitForm={subnitForm}
                         description={description}
                         setDescription={setDescription}
@@ -222,44 +227,50 @@ const Body = () => {
                         updateForm={updateForm}
                         typeCheck={typeCheck}
                     />
-                </div>
-                <div className='w-[50%] ml-20 pl-20 border-l border-l-slate-200'>
-                    <div className='overflow-y-scroll h-[33rem] custom-scrollbar py-4 px-7 overflow-x-hidden'>
-                        {
-                            query !== ''
-                                ?
-                                <div>
-                                    <NotesCard
-                                        notes={searchResults}
-                                        setNotes={setNotes}
-                                        deleteNote={deleteNote}
-                                        getNoteDetails={getNoteDetails}
-                                        setShow={setShow}
-                                    />
-                                </div>
-                                :
-                                <div>
-                                    {
-                                        notesLoading
-                                            ?
-                                            <div>
-                                                <Skeleton className='h-[12rem] w-full rounded-xl mb-6' />
-                                                <Skeleton className='h-[12rem] w-full rounded-xl mb-6' />
-                                            </div>
-                                            :
-                                            <NotesCard
-                                                notes={notes}
-                                                setNotes={setNotes}
-                                                deleteNote={deleteNote}
-                                                getNoteDetails={getNoteDetails}
-                                                setShow={setShow}
-                                            />
-                                    }
-                                </div>
-                        }
+                </section>
+
+                <section className='motion-rise min-w-0 rounded-[2rem] border border-white/80 bg-white/65 p-5 shadow-[0_20px_60px_-32px_rgba(15,23,42,0.16)] backdrop-blur transition-shadow duration-300 hover:shadow-[0_24px_70px_-34px_rgba(15,23,42,0.22)] sm:p-8' style={{ animationDelay: '420ms' }}>
+                    <div className='mb-7 flex items-end justify-between gap-4'>
+                        <div>
+                            <p className='text-xs font-semibold uppercase tracking-[0.18em] text-violet-500'>Your collection</p>
+                            <h2 className='mt-2 text-2xl font-semibold tracking-tight text-slate-900'>
+                                {query ? 'Search results' : 'Your notes'}
+                            </h2>
+                        </div>
+                        <span className='shrink-0 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-500'>
+                            {query ? searchResults.length : notes.length} {query ? 'found' : notes.length === 1 ? 'note' : 'notes'}
+                        </span>
                     </div>
-                </div>
-            </div>
+
+                    <div className='custom-scrollbar space-y-4 overscroll-contain lg:max-h-[calc(100vh-16rem)] lg:overflow-y-auto lg:pr-2'>
+                        {notesLoading && query === '' ? (
+                            <>
+                                <Skeleton className='h-44 w-full rounded-[1.5rem] bg-slate-100' />
+                                <Skeleton className='h-44 w-full rounded-[1.5rem] bg-slate-100' />
+                            </>
+                        ) : (query ? searchResults : notes).length > 0 ? (
+                            <NotesCard
+                                notes={query ? searchResults : notes}
+                                deleteNote={deleteNote}
+                                getNoteDetails={getNoteDetails}
+                                setShow={setShow}
+                            />
+                        ) : (
+                            <div className='motion-rise flex min-h-56 flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-slate-200 bg-slate-50/70 px-6 text-center'>
+                                <div className='motion-float flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-violet-500 shadow-sm'>
+                                    <FileText size={20} aria-hidden='true' />
+                                </div>
+                                <h3 className='mt-4 font-semibold text-slate-800'>
+                                    {query ? 'No matching notes' : 'A fresh page'}
+                                </h3>
+                                <p className='mt-1 max-w-xs text-sm leading-6 text-slate-500'>
+                                    {query ? 'Try another word or phrase.' : 'Your saved thoughts will be waiting here.'}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                </section>
+            </main>
             <ViewDetails
                 show={show}
                 setShow={setShow}

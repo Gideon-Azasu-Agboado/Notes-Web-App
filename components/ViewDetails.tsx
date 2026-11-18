@@ -1,7 +1,6 @@
-import React from 'react'
-import { formatDistanceToNow, parseISO } from 'date-fns';
-import { IoPencilSharp } from "react-icons/io5";
-import { IoCloseOutline } from "react-icons/io5";
+import React, { useCallback, useEffect } from 'react'
+import { formatDistanceToNow, parseISO } from 'date-fns'
+import { X } from 'lucide-react'
 
 interface Props {
     show: boolean,
@@ -16,66 +15,69 @@ interface Props {
     setTypeCheck: React.Dispatch<React.SetStateAction<string>>,
 }
 
-const ViewDetails = ({ show, setShow, title, setTitle, description, setDescription, createdAt, updatedAt, updateState, setTypeCheck }: Props) => {
-    const formatRelativeTime = (timestamp: string) => {
-        const date = parseISO(timestamp);
-        return formatDistanceToNow(date, { addSuffix: true });
-    };
+const ViewDetails = ({ show, setShow, title, setTitle, setDescription, description, createdAt, updatedAt, updateState, setTypeCheck }: Props) => {
+    const formatRelativeTime = (timestamp: string) => (
+        formatDistanceToNow(parseISO(timestamp), { addSuffix: true })
+    )
 
-    const close = () => {
+    const close = useCallback(() => {
         setShow(false)
         setTypeCheck('neither')
         setTitle('')
         setDescription('')
-    }
+    }, [setShow, setTypeCheck, setTitle, setDescription])
+
+    useEffect(() => {
+        if (!show) return
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') close()
+        }
+
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [show, close])
+
+    if (!show) return null
 
     return (
-        <>
-            {
-                show &&
-                <div className='absolute left-0 right-0 bottom-0 top-0 bg-slate-900/20 flex justify-center items-center'>
-                    <div className='h-[90vh] w-[60%] bg-slate-100 rounded-xl px-12 py-12 shadow-lg'>
-                        <div className='flex justify-end'>
-                            <div className='flex flex-row items-center gap-5'>
-                                <div className='group relative'>
-                                    <h1 className='cursor-pointer'>
-                                        <IoPencilSharp
-                                        />
-                                    </h1>
-                                    <div className='px-5 py-1 shadow-xl rounded-md absolute -top-12 -right-5 hidden group-hover:block transition duration-700 bg-slate-50'>
-                                        <p className='text-blue-700 text-[14px]'>Edit</p>
-                                    </div>
-                                </div>
-                                <div className='group relative'>
-                                    <span className='cursor-pointer text-3xl flex justify-center items-center rounded-full'>
-                                        <IoCloseOutline onClick={() => close()} />
-                                    </span>
-                                    <div className='px-5 py-1 shadow-xl rounded-md absolute -top-12 hidden group-hover:block transition duration-700 bg-slate-50'>
-                                        <p className='text-blue-700 text-[14px]'>Close</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className='mt-10 flex flex-row justify-between items-center'>
-                            <h1 className='text-xl font-semibold'>
-                                {title}
-                            </h1>
-                            {
-                                updateState
-                                    ?
-                                    <p className='text-xs text-gray-500'>Updated {formatRelativeTime(updatedAt)}</p>
-                                    :
-                                    <p className='text-xs text-gray-500'>Created {formatRelativeTime(createdAt)}</p>
-                            }
-                        </div>
-                        <div className='my-4 border-b border-b-slate-300' />
-                        <p className='mt-8'>
-                            {description}
-                        </p>
+        <div
+            className='motion-dialog-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/30 p-4 backdrop-blur-sm'
+            onClick={(event) => {
+                if (event.target === event.currentTarget) close()
+            }}
+        >
+            <section
+                role='dialog'
+                aria-modal='true'
+                aria-labelledby='note-dialog-title'
+                className='motion-dialog-panel max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] border border-white/70 bg-white p-6 shadow-2xl shadow-slate-950/20 sm:p-9'
+            >
+                <div className='flex items-start justify-between gap-6'>
+                    <div>
+                        <p className='text-xs font-semibold uppercase tracking-[0.18em] text-violet-500'>Saved thought</p>
+                        <h2 id='note-dialog-title' className='mt-3 break-words text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl'>
+                            {title}
+                        </h2>
                     </div>
+                    <button
+                        type='button'
+                        aria-label='Close note'
+                        className='flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition duration-200 hover:rotate-90 hover:bg-slate-200 hover:text-slate-900 active:scale-90'
+                        onClick={close}
+                    >
+                        <X size={19} />
+                    </button>
                 </div>
-            }
-        </>
+                <p className='mt-4 text-xs text-slate-400'>
+                    {updateState ? 'Updated' : 'Saved'} {formatRelativeTime(updateState ? updatedAt : createdAt)}
+                </p>
+                <div className='my-6 h-px bg-slate-100' />
+                <p className='whitespace-pre-wrap break-words text-[15px] leading-7 text-slate-600'>
+                    {description}
+                </p>
+            </section>
+        </div>
     )
 }
 

@@ -62,7 +62,7 @@ const Form = ({ title, setTitle, description, setDescription, btnLoading, subnit
                 <button
                     type='submit'
                     disabled={btnLoading}
-                    className='inline-flex h-11 min-w-36 items-center justify-center rounded-2xl bg-slate-900 px-5 text-sm font-medium text-white shadow-lg shadow-slate-900/10 transition duration-200 hover:-translate-y-0.5 hover:bg-violet-700 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60'
+                    className='inline-flex h-11 min-w-36 items-center justify-center rounded-2xl bg-slate-900 px-5 text-sm font-medium text-white shadow-xl shadow-slate-900/10 transition duration-200 hover:-translate-y-0.5 hover:bg-violet-700 active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60'
                 >
                     {btnLoading ? (update ? 'Updating…' : 'Saving…') : (update ? 'Update note' : 'Save note')}
                 </button>

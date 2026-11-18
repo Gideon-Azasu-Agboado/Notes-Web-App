@@ -14,7 +14,7 @@ export default function SignIn() {
                     <span className="pr-4 text-blue-500">
                         <FaGoogle />
                     </span>
-                    Signin with Google
+                    Sign in with Google
                 </button>
             </form>
         </div>

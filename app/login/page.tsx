@@ -15,7 +15,7 @@ const Page = () => {
                             smooth and effortless.
                         </p>
                     </div>
-                    <p className="mb-[2rem] text-center text-blue-700">Sign in using your google account</p>
+                    <p className="mb-[2rem] text-center text-blue-700 font-medium">Sign in using your google account</p>
                     <div className="flex justify-center">
                         <div className="flex flex-row gap-5 items-end">
                             <div className="h-[15rem] w-[30%] relative">
